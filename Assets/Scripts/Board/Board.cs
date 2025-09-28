@@ -77,6 +77,8 @@ public class Board
 
     internal void Fill()
     {
+        List<NormalItem.eNormalType> excludeTypes = new List<NormalItem.eNormalType>(4);
+        
         for (int x = 0; x < boardSizeX; x++)
         {
             for (int y = 0; y < boardSizeY; y++)
@@ -84,13 +86,16 @@ public class Board
                 Cell cell = m_cells[x, y];
                 NormalItem item = new NormalItem();
 
-                List<NormalItem.eNormalType> types = new List<NormalItem.eNormalType>();
+                // List<NormalItem.eNormalType> types = new List<NormalItem.eNormalType>();
+                
+                excludeTypes.Clear();
+                
                 if (cell.NeighbourBottom != null)
                 {
                     NormalItem nitem = cell.NeighbourBottom.Item as NormalItem;
                     if (nitem != null)
                     {
-                        types.Add(nitem.ItemType);
+                        excludeTypes.Add(nitem.ItemType);
                     }
                 }
 
@@ -99,11 +104,11 @@ public class Board
                     NormalItem nitem = cell.NeighbourLeft.Item as NormalItem;
                     if (nitem != null)
                     {
-                        types.Add(nitem.ItemType);
+                        excludeTypes.Add(nitem.ItemType);
                     }
                 }
 
-                item.SetType(Utils.GetRandomNormalTypeExcept(types.ToArray()));
+                item.SetType(Utils.GetRandomNormalTypeExcept(excludeTypes));
                 item.SetView();
                 item.SetViewRoot(m_root);
 
