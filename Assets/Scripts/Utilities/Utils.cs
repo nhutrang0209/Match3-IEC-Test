@@ -27,6 +27,23 @@ public class Utils
 
         return result;
     }
+
+    public static NormalItem.eNormalType[] GetExcludedList(IList<NormalItem.eNormalType> except)
+    {
+        if (except == null || except.Count == 0) return _allTypes;
+        var candidates = new List<NormalItem.eNormalType>(_allTypes.Length);
+        foreach (var t in _allTypes)
+        {
+            var skip = false;
+            foreach (var t1 in except)
+            {
+                if (t1 == t) { skip = true; break; }
+            }
+            if (!skip) candidates.Add(t);
+        }
+
+        return candidates.ToArray();
+    }
     
     public static NormalItem.eNormalType GetRandomNormalTypeExcept(IList<NormalItem.eNormalType> except)
     {

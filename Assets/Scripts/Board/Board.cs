@@ -192,7 +192,8 @@ public class Board
 
                 NormalItem item = new NormalItem();
 
-                item.SetType(Utils.GetRandomNormalType());
+                // item.SetType(Utils.GetRandomNormalType());
+                item.SetType(GetRandomNormalType(x, y));
                 item.SetView();
                 item.SetViewRoot(m_root);
 
@@ -200,6 +201,63 @@ public class Board
                 cell.ApplyItemPosition(true);
             }
         }
+    }
+
+    private NormalItem.eNormalType GetRandomNormalType(int x, int y)
+    {
+        Cell cell = m_cells[x, y];
+        List<NormalItem.eNormalType> excludeTypes = new List<NormalItem.eNormalType>(4);
+
+        TryAddExcludedType(cell.NeighbourLeft);
+        TryAddExcludedType(cell.NeighbourRight);
+        TryAddExcludedType(cell.NeighbourUp);
+        TryAddExcludedType(cell.NeighbourBottom);
+
+        var options = Utils.GetExcludedList(excludeTypes);
+        return FindMinInMap(options);
+
+        void TryAddExcludedType(Cell neighbour)
+        {
+            if (!neighbour) return;
+            if (neighbour.Item == null) return;
+            
+            var normalItem = (NormalItem)neighbour.Item;
+            var itemType  = normalItem.ItemType;
+            if (!excludeTypes.Contains(itemType))
+            {
+                excludeTypes.Add(itemType);
+            }
+        }
+    }
+    
+    NormalItem.eNormalType FindMinInMap(NormalItem.eNormalType[] options)
+    {
+        var freq = new int[10];
+        var result = NormalItem.eNormalType.TYPE_ONE;
+        var min = int.MaxValue;
+        for (var x = 0; x < boardSizeX; x++)
+        {
+            for (int y = 0; y < boardSizeY; y++)
+            {
+                Cell cell = m_cells[x, y];
+                if (cell.IsEmpty) continue;
+                var normalItem = cell.Item as NormalItem;
+                
+                if (normalItem == null) continue;
+
+                var itemType = normalItem.ItemType;
+                if (!options.Contains(itemType)) continue;
+                freq[(int)itemType]++;
+                
+                if (min >freq[(int)itemType])
+                {
+                    min = freq[(int)itemType];
+                    result = normalItem.ItemType;
+                }
+            }
+        }
+
+        return result;
     }
 
     internal void ExplodeAllItems()
