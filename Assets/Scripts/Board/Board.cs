@@ -47,9 +47,9 @@ public class Board
         {
             for (int y = 0; y < boardSizeY; y++)
             {
-                GameObject go = GameObject.Instantiate(prefabBG);
-                go.transform.position = origin + new Vector3(x, y, 0f);
-                go.transform.SetParent(m_root);
+                var position = origin + new Vector3(x, y, 0f);
+                
+                GameObject go = GameObject.Instantiate(prefabBG, position, Quaternion.identity, m_root);
 
                 Cell cell = go.GetComponent<Cell>();
                 cell.Setup(x, y);
