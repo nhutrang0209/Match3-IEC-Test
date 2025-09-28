@@ -115,25 +115,34 @@ public class Board
 
     internal void Shuffle()
     {
-        List<Item> list = new List<Item>();
+        int count = boardSizeX * boardSizeY;
+
+        Item[] items = new Item[count];
+        int k = 0;
         for (int x = 0; x < boardSizeX; x++)
         {
             for (int y = 0; y < boardSizeY; y++)
             {
-                list.Add(m_cells[x, y].Item);
-                m_cells[x, y].Free();
+                items[k++] = m_cells[x, y].Item;
+                m_cells[x, y].Free(); 
             }
         }
 
+        for (int i = count - 1; i > 0; i--)
+        {
+            int j = UnityEngine.Random.Range(0, i + 1);
+            (items[i], items[j]) = (items[j], items[i]); 
+        }
+
+        k = 0;
         for (int x = 0; x < boardSizeX; x++)
         {
             for (int y = 0; y < boardSizeY; y++)
             {
-                int rnd = UnityEngine.Random.Range(0, list.Count);
-                m_cells[x, y].Assign(list[rnd]);
-                m_cells[x, y].ApplyItemMoveToPosition();
-
-                list.RemoveAt(rnd);
+                var cell = m_cells[x, y];
+                var item = items[k++];
+                cell.Assign(item);
+                cell.ApplyItemMoveToPosition(); 
             }
         }
     }
