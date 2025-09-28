@@ -34,13 +34,12 @@ public class Utils
             return GetRandomNormalType();
 
         var candidates = new List<NormalItem.eNormalType>(_allTypes.Length);
-        for (int i = 0; i < _allTypes.Length; i++)
+        foreach (var t in _allTypes)
         {
-            var t = _allTypes[i];
-            bool skip = false;
-            for (int j = 0; j < except.Count; j++)
+            var skip = false;
+            foreach (var t1 in except)
             {
-                if (except[j] == t) { skip = true; break; }
+                if (t1 == t) { skip = true; break; }
             }
             if (!skip) candidates.Add(t);
         }

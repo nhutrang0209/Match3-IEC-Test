@@ -31,7 +31,7 @@ public class BoardController : MonoBehaviour
 
     private bool m_gameOver;
 
-    public void StartGame(GameManager gameManager, GameSettings gameSettings)
+    public void StartGame(GameManager gameManager, GameSettings gameSettings, bool previousLevel = false)
     {
         m_gameManager = gameManager;
 
@@ -43,12 +43,12 @@ public class BoardController : MonoBehaviour
 
         m_board = new Board(this.transform, gameSettings);
 
-        Fill();
+        Fill(previousLevel);
     }
 
-    private void Fill()
+    private void Fill(bool previousLevel = false)
     {
-        m_board.Fill();
+        m_board.Fill(previousLevel);
         FindMatchesAndCollapse();
     }
 

@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Data;
 using Pool;
 using UnityEngine;
 
@@ -75,47 +76,72 @@ public class Board
 
     }
 
-    internal void Fill()
+    internal void Fill(bool previousLevel = false)
     {
         List<NormalItem.eNormalType> excludeTypes = new List<NormalItem.eNormalType>(4);
+
+        var levelData = LevelData.Default;
+        
+        if (!previousLevel)
+            levelData.previousLevelMap = new int[boardSizeX * boardSizeY];
+        
+        // Debug.Log($"Previous: {string.Join(",", levelData.previousLevelMap)}");
         
         for (int x = 0; x < boardSizeX; x++)
         {
             for (int y = 0; y < boardSizeY; y++)
             {
-                Cell cell = m_cells[x, y];
+                NormalItem.eNormalType type;
+                
                 NormalItem item = new NormalItem();
-
-                // List<NormalItem.eNormalType> types = new List<NormalItem.eNormalType>();
+                Cell cell = m_cells[x, y];
                 
-                excludeTypes.Clear();
-                
-                if (cell.NeighbourBottom != null)
+                var index = boardSizeY * x + y;
+                if (previousLevel)
                 {
-                    NormalItem nitem = cell.NeighbourBottom.Item as NormalItem;
-                    if (nitem != null)
+                    type = (NormalItem.eNormalType)levelData.previousLevelMap[index];
+                }
+                else
+                {
+
+                    // List<NormalItem.eNormalType> types = new List<NormalItem.eNormalType>();
+                
+                    excludeTypes.Clear();
+                
+                    if (cell.NeighbourBottom != null)
                     {
-                        excludeTypes.Add(nitem.ItemType);
+                        NormalItem nitem = cell.NeighbourBottom.Item as NormalItem;
+                        if (nitem != null)
+                        {
+                            excludeTypes.Add(nitem.ItemType);
+                        }
                     }
+
+                    if (cell.NeighbourLeft != null)
+                    {
+                        NormalItem nitem = cell.NeighbourLeft.Item as NormalItem;
+                        if (nitem != null)
+                        {
+                            excludeTypes.Add(nitem.ItemType);
+                        }
+                    }
+
+                    type = Utils.GetRandomNormalTypeExcept(excludeTypes);
                 }
 
-                if (cell.NeighbourLeft != null)
-                {
-                    NormalItem nitem = cell.NeighbourLeft.Item as NormalItem;
-                    if (nitem != null)
-                    {
-                        excludeTypes.Add(nitem.ItemType);
-                    }
-                }
-
-                item.SetType(Utils.GetRandomNormalTypeExcept(excludeTypes));
+                item.SetType(type);
                 item.SetView();
                 item.SetViewRoot(m_root);
 
                 cell.Assign(item);
                 cell.ApplyItemPosition(false);
+
+                levelData.previousLevelMap[index] = (int)type;
             }
         }
+        
+        levelData.Save();
+        // Debug.Log($"Previous: {string.Join(",", levelData.previousLevelMap)}");
     }
 
     internal void Shuffle()
@@ -155,6 +181,8 @@ public class Board
 
     internal void FillGapsWithNewItems()
     {
+        Debug.Log("FillGapsWithNewItems");
+        
         for (int x = 0; x < boardSizeX; x++)
         {
             for (int y = 0; y < boardSizeY; y++)

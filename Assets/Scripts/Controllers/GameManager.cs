@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Data;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -81,10 +82,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void LoadLevel(eLevelMode mode)
+    public void LoadLevel(eLevelMode mode, bool previousLevel = false)
     {
         m_boardController = new GameObject("BoardController").AddComponent<BoardController>();
-        m_boardController.StartGame(this, m_gameSettings);
+        var levelData = LevelData.Default;
+        levelData.previousMode = (int)mode;
+        levelData.Save();
+        m_boardController.StartGame(this, m_gameSettings, previousLevel);
 
         if (mode == eLevelMode.MOVES)
         {
