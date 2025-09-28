@@ -8,6 +8,10 @@ using Pool;
 [Serializable]
 public class Item
 {
+    private const string kSkinPath = "ItemSkinFish";
+    private static ItemSkinFish _skinFish;
+    protected static ItemSkinFish SkinFish => _skinFish ??= SoCache.Get<ItemSkinFish>(kSkinPath);
+    
     public Cell Cell { get; private set; }
 
     public Transform View { get; private set; }

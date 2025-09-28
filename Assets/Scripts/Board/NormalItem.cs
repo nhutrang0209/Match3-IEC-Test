@@ -53,6 +53,15 @@ public class NormalItem : Item
         return prefabname;
     }
 
+    public override void SetView()
+    {
+        base.SetView();
+        
+        var sr = View.GetComponent<SpriteRenderer>();
+        var sprite = SkinFish.GetSprite(ItemType);
+        sr.sprite = sprite;
+    }
+
     internal override bool IsSameType(Item other)
     {
         NormalItem it = other as NormalItem;
