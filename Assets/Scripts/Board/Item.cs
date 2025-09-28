@@ -19,7 +19,7 @@ public class Item
 
         if (!string.IsNullOrEmpty(prefabname))
         {
-            GameObject prefab = Resources.Load<GameObject>(prefabname);
+            var prefab = PrefabCache.Get(prefabname);
             if (prefab)
             {
                 View = ObjectPool.Spawn(prefab).transform;
