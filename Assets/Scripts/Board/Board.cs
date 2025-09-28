@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Pool;
 using UnityEngine;
 
 public class Board
@@ -48,8 +49,10 @@ public class Board
             for (int y = 0; y < boardSizeY; y++)
             {
                 var position = origin + new Vector3(x, y, 0f);
+
+                var go = ObjectPool.Spawn(prefabBG, position, parent: m_root);
                 
-                GameObject go = GameObject.Instantiate(prefabBG, position, Quaternion.identity, m_root);
+                // GameObject go = GameObject.Instantiate(prefabBG, position, Quaternion.identity, m_root);
 
                 Cell cell = go.GetComponent<Cell>();
                 cell.Setup(x, y);
@@ -669,7 +672,8 @@ public class Board
                 Cell cell = m_cells[x, y];
                 cell.Clear();
 
-                GameObject.Destroy(cell.gameObject);
+                ObjectPool.Despawn(cell.gameObject);
+                // GameObject.Destroy(cell.gameObject);
                 m_cells[x, y] = null;
             }
         }
